@@ -9,6 +9,7 @@ namespace HeapDividerOptimalAlgorithm
     public class HeapDivider
     {
         private int _countOfStones;
+        private int[] shiftingIndexes;
 
         private int _leftLastIndex;
         private int _rightLastIndex;
@@ -27,17 +28,22 @@ namespace HeapDividerOptimalAlgorithm
             _leftIndexes = new List<int>();
 
             _weights = new int[countOfStones];
+            shiftingIndexes = new int[countOfStones];
+            for (int i = 0; i < countOfStones; i++)
+            {
+                shiftingIndexes[i] = -1;
+            }
         }
 
 
         public void DivisionDescendingOrder()
         {
-            List<int> sorted = _weights.OrderBy(i =>i).ToList();
-            for (int i = sorted.Count-2; i >= 0; i -= 2)
+            List<int> sorted = _weights.OrderBy(i => i).ToList();
+            for (int i = sorted.Count - 2; i >= 0; i -= 2)
             {
                 _rightIndexes.Add(i);
             }
-            for (int i = sorted.Count-1; i >= 0; i-= 2)
+            for (int i = sorted.Count - 1; i >= 0; i -= 2)
             {
                 _leftIndexes.Add(i);
             }
@@ -62,12 +68,10 @@ namespace HeapDividerOptimalAlgorithm
         {
             int difference = Int32.MaxValue, tempDifferent = 0, firstDifference = 0;
             int leftSumm = 0, rightSumm = 0;
-            int i = 0;
-            int rightExtremeIndex = _leftIndexes.Min(), left;
-
+            int leftLastIndex = Int32.MaxValue, rightLastIndex = Int32.MaxValue;
+            int firstDiff = -1; // первая разница 
             for (;;)
             {
-                i++;
                 foreach (int index in _leftIndexes)
                 {
                     leftSumm += _weights[index];
@@ -77,35 +81,28 @@ namespace HeapDividerOptimalAlgorithm
                     rightSumm += _weights[index];
                 }
                 tempDifferent = leftSumm - rightSumm;
-                leftSumm = 0;
-                rightSumm = 0;                
+
                 if (Math.Abs(difference) >= (Math.Abs(tempDifferent)))
                 {
                     difference = tempDifferent;
-                }
-                
-                if (tempDifferent > 0)
-                {
-                    rightExtremeIndex = _leftIndexes.Min();
-                    _rightIndexes.Add(rightExtremeIndex);
-                    _leftIndexes.Remove(rightExtremeIndex);
-                }
-                else if (tempDifferent < 0)
-                {
-                    rightExtremeIndex = _rightIndexes.Min();
-                    _leftIndexes.Add(rightExtremeIndex);
-                    _rightIndexes.Remove(rightExtremeIndex);
-                }
-                else
-                {
-                    difference = tempDifferent;
-                    return difference;
+                    firstDiff = difference;
                 }
 
-                if (i >= _countOfStones * 2) // todo
-                    return Math.Abs(difference);
+                leftLastIndex = 0;
+
+                leftLastIndex = _leftIndexes.Min();
+                rightLastIndex = leftLastIndex;
+                while (_weights[leftLastIndex]<=firstDiff) // перекладывание из большей кучи (левой)
+                {
+                   
+                }
+                break;
+
             }
+            return difference;
         }
+
+        
 
     }
 }
